@@ -1,12 +1,12 @@
-import { GlobalStyle } from './styles/GlobalStyle'
-
-import { Greetings } from './components/Greetings'
+import { Routes, Route } from 'react-router-dom'
+import MainPage from './pages/MainPage'
 
 export function App() {
   return (
-    <>
-      <GlobalStyle />
-      <Greetings />
-    </>
+    <Routes>
+      <Route path="/">
+        <Route index element={<MainPage />} />
+      </Route>
+    </Routes>
   )
 }
