@@ -25,10 +25,7 @@ const Component = () => {
   }
 
   return (
-    <Container
-      sx={{ position: 'fixed', bottom: 0, left: 0, width: '100%' }}
-      elevation={3}
-    >
+    <Container elevation={3}>
       <BottomNavigation showLabels value={value} onChange={handleChange}>
         <BottomNavigationAction
           label="Main"

@@ -21,6 +21,10 @@ module.exports = [
     },
   },
   {
+    test: /\.m?js/,
+    resolve: { fullySpecified: false },
+  },
+  {
     test: /\.(png|jpe?g|gif)$/i,
     loader: 'file-loader',
     options: {
