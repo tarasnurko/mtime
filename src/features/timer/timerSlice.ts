@@ -1,14 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
-// import type { PayloadAction } from '@reduxjs/toolkit'
+import type { PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '../../app/store'
-
-export enum TIMER_STATUS {
-  IDLE = 'IDLE',
-  WORK = 'WORK',
-  REST = 'REST',
-  PAUSE = 'PAUSE',
-  STOP = 'STOP',
-}
+import { TIMER_STATUS } from './constants'
 
 // 1) We create new Date() in which we add time we need (start time is new Date(new Date() + timeWeNeed))
 // 2) In react component we create setInterval which substract time until it goes to 0 (currentTime is substructedTime)
@@ -29,13 +22,13 @@ export const timerSlice = createSlice({
   name: 'timer',
   initialState,
   reducers: {
-    log: state => {
-      state.currentTime += 1
+    setTimerStatus: (state, action: PayloadAction<TIMER_STATUS>) => {
+      state.status = action.payload
     },
   },
 })
 
-export const { log } = timerSlice.actions
+export const { setTimerStatus } = timerSlice.actions
 
 export const selectTimer = (state: RootState) => state.timer.currentTime
 

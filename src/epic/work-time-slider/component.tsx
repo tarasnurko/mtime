@@ -33,18 +33,25 @@ const marks = [
 
 const valuetext = (value: number) => `${value}m`
 
-const Components: React.FC<IProps> = ({ ariaLabel }) => {
+const Components: React.FC<IProps> = ({
+  ariaLabel,
+  value,
+  defaultValue,
+  onChange,
+}) => {
   return (
     <Wrapper>
       <Slider
         aria-label={ariaLabel}
-        defaultValue={25}
+        defaultValue={defaultValue}
         getAriaValueText={valuetext}
         step={5}
         marks={marks}
         min={5}
         max={80}
         valueLabelDisplay="on"
+        value={value}
+        onChange={onChange}
       />
     </Wrapper>
   )

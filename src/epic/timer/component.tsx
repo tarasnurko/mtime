@@ -1,6 +1,7 @@
 import { Button, Container, styled, useTheme } from '@mui/material'
 import React from 'react'
 import { CircularProgressbarWithChildren } from 'react-circular-progressbar'
+import { useAppSelector } from '../../app/hooks'
 
 const Wrapper = styled(Container)`
   width: 200px;
@@ -12,6 +13,10 @@ const Wrapper = styled(Container)`
 
 const Component: React.FC = () => {
   const theme = useTheme()
+
+  const timer = useAppSelector(state => state.timer)
+
+  console.log(timer)
 
   return (
     <Wrapper>
