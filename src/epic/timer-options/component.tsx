@@ -1,13 +1,15 @@
+import { Container, MenuItem, Select, styled } from '@mui/material'
+import React from 'react'
+import { useAppDispatch, useAppSelector } from '../../app/hooks'
+
 import {
-  Container,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-  styled,
-} from '@mui/material'
-import React, { useState } from 'react'
-import { useAppSelector } from '../../app/hooks'
-import { selectTimerOptions, TIMER_MODE } from '../../features/timer-options'
+  changeTimerMode,
+  setRestTime,
+  setWorkTime,
+  TIMER_MODE,
+  selectTimer,
+} from '../../features/timer'
+
 import { RestTimeSlider } from '../rest-time-slider'
 import { WorkTimeSlider } from '../work-time-slider'
 
@@ -21,24 +23,29 @@ const Wrapper = styled(Container)`
 `
 
 const Component: React.FC = () => {
-  const [option, setOption] = useState<TIMER_MODE>(TIMER_MODE.WORK)
+  const timer = useAppSelector(selectTimer)
+  const dispatch = useAppDispatch()
 
-  const [value, setValue] = useState<number>(25)
+  const handleChange = () => {
+    dispatch(changeTimerMode())
+  }
 
-  const timerOptions = useAppSelector(selectTimerOptions)
+  const handleWorkTimeChange = (event: Event, value: number | number[]) => {
+    if (typeof value === 'number') {
+      dispatch(setWorkTime(value))
+    }
+  }
 
-  const handleChange = (event: SelectChangeEvent) =>
-    setOption(event.target.value as TIMER_MODE)
-
-  const handleWorkTimeChange = (event: Event, value: number) => {
-    // console.log(event.target)
-    setValue(value)
+  const handleRestTimeChange = (event: Event, value: number | number[]) => {
+    if (typeof value === 'number') {
+      dispatch(setRestTime(value))
+    }
   }
 
   return (
     <Wrapper>
       <Select
-        value={option}
+        value={timer.mode}
         size="small"
         variant="outlined"
         onChange={handleChange}
@@ -46,15 +53,18 @@ const Component: React.FC = () => {
         <MenuItem value={TIMER_MODE.WORK}>work</MenuItem>
         <MenuItem value={TIMER_MODE.REST}>rest</MenuItem>
       </Select>
-      {option === TIMER_MODE.WORK ? (
+      {timer.mode === TIMER_MODE.WORK ? (
         <WorkTimeSlider
           ariaLabel="timer-work-time"
-          value={value}
-          defaultValue={timerOptions.workDefaultTime}
+          value={timer.workTime}
           onChange={handleWorkTimeChange}
         />
       ) : (
-        <RestTimeSlider ariaLabel="timer-rest-time" />
+        <RestTimeSlider
+          ariaLabel="timer-rest-time"
+          value={timer.restTime}
+          onChange={handleRestTimeChange}
+        />
       )}
     </Wrapper>
   )

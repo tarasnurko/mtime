@@ -1,4 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron'
+import { timerApi } from './timer'
 
 export const api = {
   /**
@@ -16,9 +17,16 @@ export const api = {
   /**
    * Provide an easier way to listen to events
    */
-  on: (channel: string, callback: Function) => {
-    ipcRenderer.on(channel, (_, data) => callback(data))
-  }
+  // on: (channel: string, callback: Function) => {
+  //   ipcRenderer.on(channel, (_, data) => callback(data))
+  // },
+
+  abc: () => ipcRenderer.send('abc'),
+  getInterval: (callback: Function) =>
+    ipcRenderer.on('getInterval', (_, data) => {
+      callback(data)
+    }),
 }
 
 contextBridge.exposeInMainWorld('Main', api)
+contextBridge.exposeInMainWorld('timerApi', timerApi)

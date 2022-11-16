@@ -1,21 +1,23 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '../../app/store'
-import { TIMER_STATUS } from './constants'
 
-// 1) We create new Date() in which we add time we need (start time is new Date(new Date() + timeWeNeed))
-// 2) In react component we create setInterval which substract time until it goes to 0 (currentTime is substructedTime)
+import { TIMER_MODE, TIMER_STATUS } from './constants'
 
 interface TimerState {
-  currentTime: number
-  startTime: number
+  time: number
   status: TIMER_STATUS
+  mode: TIMER_MODE
+  workTime: number
+  restTime: number
 }
 
 const initialState: TimerState = {
-  currentTime: 0,
-  startTime: 0,
+  time: 0,
   status: TIMER_STATUS.IDLE,
+  mode: TIMER_MODE.WORK,
+  workTime: 25,
+  restTime: 5,
 }
 
 export const timerSlice = createSlice({
@@ -25,11 +27,22 @@ export const timerSlice = createSlice({
     setTimerStatus: (state, action: PayloadAction<TIMER_STATUS>) => {
       state.status = action.payload
     },
+    changeTimerMode: state => {
+      state.mode =
+        state.mode === TIMER_MODE.WORK ? TIMER_MODE.REST : TIMER_MODE.WORK
+    },
+    setWorkTime: (state, action: PayloadAction<number>) => {
+      state.workTime = action.payload
+    },
+    setRestTime: (state, action: PayloadAction<number>) => {
+      state.restTime = action.payload
+    },
   },
 })
 
-export const { setTimerStatus } = timerSlice.actions
+export const { setTimerStatus, changeTimerMode, setWorkTime, setRestTime } =
+  timerSlice.actions
 
-export const selectTimer = (state: RootState) => state.timer.currentTime
+export const selectTimer = (state: RootState) => state.timer
 
 export default timerSlice.reducer

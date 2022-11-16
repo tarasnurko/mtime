@@ -1,4 +1,5 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
+import { timer } from './timer'
 
 let mainWindow: BrowserWindow | null
 
@@ -13,7 +14,7 @@ declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string
 function createWindow() {
   mainWindow = new BrowserWindow({
     // icon: path.join(assetsPath, 'assets', 'icon.png'),
-    width: 420,
+    width: 414,
     height: 457,
     backgroundColor: '#fff',
     webPreferences: {
@@ -37,6 +38,18 @@ async function registerListeners() {
   ipcMain.on('message', (_, message) => {
     console.log(message)
   })
+
+  // ipcMain.on('abc', async (_, args) => {
+  //   let num = 0
+  //   console.log('dfdfd')
+  //   const interval = setInterval(() => {
+  //     _.sender.send('getInterval', num)
+  //     num++
+  //   }, 150)
+  //   clearInterval(interval)
+  // })
+
+  timer.registerIpcListeners()
 }
 
 app

@@ -6,6 +6,7 @@ export function App() {
     <Routes>
       <Route path="/">
         <Route index element={<TimerPage />} />
+        <Route path="stats" element={<div>stats</div>} />
       </Route>
     </Routes>
   )

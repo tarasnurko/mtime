@@ -1,9 +1,12 @@
 import { Container, styled } from '@mui/material'
 import React from 'react'
+import { useAppSelector } from '../../app/hooks'
 import { PageContainer } from '../../common/page-container'
 import { Navigation } from '../../epic/navigation'
 import { Timer } from '../../epic/timer'
+import { TimerButtons } from '../../epic/timer-buttons'
 import { TimerOptions } from '../../epic/timer-options'
+import { selectTimer, TIMER_STATUS } from '../../features/timer'
 
 const Wrapper = styled(Container)`
   width: 100%;
@@ -13,11 +16,19 @@ const Wrapper = styled(Container)`
 `
 
 const Page: React.FC = () => {
+  const timer = useAppSelector(selectTimer)
+
+  console.log(timer)
+
   return (
     <PageContainer>
       <Wrapper>
         <Timer />
-        <TimerOptions />
+        {timer.status === TIMER_STATUS.IDLE ? (
+          <TimerOptions />
+        ) : (
+          <TimerButtons />
+        )}
       </Wrapper>
       <Navigation />
     </PageContainer>
