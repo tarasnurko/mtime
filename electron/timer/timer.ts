@@ -1,75 +1,190 @@
-import { ipcMain, IpcMainEvent, ipcRenderer } from 'electron'
+import { ipcMain, IpcMainEvent, ipcRenderer, IpcRendererEvent } from 'electron'
 import { TIMER_EVENTS, TIMER_STATUS } from './constants'
 
 class Timer {
   private status: TIMER_STATUS
   private endTime: Date | null
   private pauseStartTime: Date | null
-  private leftTime: number | null
+  private timeLeft: number | null
   private interval: ReturnType<typeof setInterval> | null
 
   constructor() {
     this.status = TIMER_STATUS.IDLE
     this.endTime = null
     this.pauseStartTime = null
-    this.leftTime = null
+    this.timeLeft = null
     this.interval = null
   }
 
-  public startTimer(time: number) {
+  private resetTimerProps() {
+    this.status = TIMER_STATUS.IDLE
+    this.endTime = null
+    this.pauseStartTime = null
+    this.timeLeft = null
+  }
+
+  // -- base -- //
+
+  private startTimer(time: number) {
     this.status = TIMER_STATUS.PROCESS
     this.endTime = new Date(Date.now() + time)
   }
 
-  public calcLeftTime() {
+  private startPause() {
+    this.status = TIMER_STATUS.PAUSE
+    this.pauseStartTime = new Date()
+  }
+
+  private endPause() {
+    if (!this.pauseStartTime || !this.endTime) return
+
+    this.status = TIMER_STATUS.PROCESS
+    this.endTime = new Date(
+      this.endTime.getTime() + (Date.now() - this.pauseStartTime.getTime())
+    )
+
+    this.pauseStartTime = null
+  }
+
+  private stopTimer() {
+    this.resetTimerProps()
+  }
+
+  // -- calculating functions -- //
+
+  private calcTimeLeft() {
     if (!this.endTime) return
-    this.leftTime = this.endTime.getTime() - Date.now()
+    this.timeLeft = this.endTime.getTime() - Date.now()
   }
 
-  public timer(_: IpcMainEvent) {
+  private calcTimerEnd(_: IpcMainEvent) {
+    if (!this.endTime || !this.timeLeft) return
+
+    if (this.timeLeft <= 0) {
+      this.emitTimerEnd(_)
+      this.clearTimerInterval()
+      this.resetTimerProps()
+    }
+  }
+
+  // -- interval interactions -- //
+
+  private timer(_: IpcMainEvent) {
+    this.calcTimeLeft()
+    this.emitTimeLeftSend(_)
+
     this.interval = setInterval(() => {
-      this.calcLeftTime()
-      this.emitLeftTimeSend(_)
-    }, 150)
+      this.calcTimeLeft()
+
+      this.calcTimerEnd(_)
+
+      this.emitTimeLeftSend(_)
+    }, 850)
   }
 
-  public clearTimer() {
+  public clearTimerInterval() {
     if (this.interval) {
       clearInterval(this.interval)
+      this.interval = null
     }
   }
 
   // -- ipcRenderer -- //
 
   public sendStartTimer(time: number) {
-    // should be if there or onSendStartTimer
     ipcRenderer.send(TIMER_EVENTS.START_TIMER, time)
   }
 
-  public emitLeftTimeSend(_: IpcMainEvent) {
-    _.sender.send(TIMER_EVENTS.GET_TIME, this.leftTime)
+  public sendStartPause() {
+    ipcRenderer.send(TIMER_EVENTS.START_PAUSE)
+  }
+
+  public sendEndPause() {
+    ipcRenderer.send(TIMER_EVENTS.END_PAUSE)
+  }
+
+  public sendStopTimer() {
+    ipcRenderer.send(TIMER_EVENTS.STOP_TIMER)
+  }
+
+  // -- go to renderer -- //
+
+  private emitTimeLeftSend(_: IpcMainEvent) {
+    _.sender.send(TIMER_EVENTS.GET_TIME, this.timeLeft)
+  }
+
+  private emitTimerEnd(_: IpcMainEvent) {
+    _.sender.send(TIMER_EVENTS.END_TIMER)
   }
 
   public getTime(callback: Function) {
-    ipcRenderer.on(TIMER_EVENTS.GET_TIME, (_, data) => {
+    const subscription = (event: IpcRendererEvent, data: number) =>
       callback(data)
-    })
+
+    ipcRenderer.on(TIMER_EVENTS.GET_TIME, subscription)
+
+    return () => ipcRenderer.removeListener(TIMER_EVENTS.GET_TIME, subscription)
+  }
+
+  public getTimerEnd(callback: Function) {
+    const subscription = () => callback()
+
+    ipcRenderer.on(TIMER_EVENTS.END_TIMER, subscription)
+
+    return () =>
+      ipcRenderer.removeListener(TIMER_EVENTS.END_TIMER, subscription)
   }
 
   // -- ipcMain -- //
 
   public registerIpcListeners() {
-    this.onSendStartTimer()
+    this.onStartTimer()
+    this.onStartPause()
+    this.onEndPause()
+    this.onStopTimer()
   }
 
-  public onSendStartTimer() {
+  private onStartTimer() {
     ipcMain.on(
       TIMER_EVENTS.START_TIMER,
       async (_: IpcMainEvent, time: number) => {
-        this.startTimer(time)
-        this.timer(_)
+        if (this.status === TIMER_STATUS.IDLE) {
+          console.log('onStartTimer')
+          this.startTimer(time)
+          this.timer(_)
+        }
       }
     )
+  }
+
+  private onStartPause() {
+    ipcMain.on(TIMER_EVENTS.START_PAUSE, async () => {
+      if (this.status === TIMER_STATUS.PROCESS) {
+        console.log('onStartPause')
+        this.startPause()
+        this.clearTimerInterval()
+      }
+    })
+  }
+
+  private onEndPause() {
+    ipcMain.on(TIMER_EVENTS.END_PAUSE, async (_: IpcMainEvent) => {
+      if (this.status === TIMER_STATUS.PAUSE) {
+        console.log('onEndPause')
+        this.endPause()
+        this.timer(_)
+      }
+    })
+  }
+
+  private onStopTimer() {
+    ipcMain.on(TIMER_EVENTS.STOP_TIMER, async () => {
+      if (this.status !== TIMER_STATUS.IDLE) {
+        console.log('onStopTimer')
+        this.clearTimerInterval()
+        this.stopTimer()
+      }
+    })
   }
 }
 

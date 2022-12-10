@@ -1,8 +1,7 @@
 export enum TIMER_STATUS {
-  IDLE = 'IDLE',
   PROCESS = 'PROCESS',
   PAUSE = 'PAUSE',
-  STOP = 'STOP',
+  IDLE = 'IDLE',
 }
 
 export enum TIMER_MODE {

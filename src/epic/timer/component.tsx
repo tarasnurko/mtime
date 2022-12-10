@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { Button, Container, Box, styled, useTheme } from '@mui/material'
 import { CircularProgressbarWithChildren } from 'react-circular-progressbar'
+
+import { useGetTime, useTimerEnd } from '../../hooks'
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
 import {
   selectTimer,
@@ -17,32 +19,39 @@ const Wrapper = styled(Container)`
   align-items: center;
 `
 
-const TimeWrapper = styled(Box)`
+const ButtonWrapper = styled(Box)`
   margin-top: -15px;
+`
+
+const TimerInnerWrapper = styled(Box)`
+  margin-top: -15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`
+
+const TimeWrapper = styled(Box)`
   display: flex;
   gap: 5px;
   font-size: 28px;
   font-weight: 600;
 `
 
+const TimeText = styled('span')`
+  font-size: 22px;
+  font-weight: 500;
+`
+
 const Component: React.FC = () => {
-  const [seconds, setSeconds] = useState<string>('')
-  const [minutes, setMinutes] = useState<string>('')
+  const [minutes, seconds, miliseconds] = useGetTime()
+  useTimerEnd()
 
   const theme = useTheme()
 
   const timer = useAppSelector(selectTimer)
   const dispatch = useAppDispatch()
 
-  const getSeconds = (miliseconds: number): string => {
-    const time = Math.floor((miliseconds / 1000) % 60)
-    return time > 9 ? time.toString() : `0${time}`
-  }
-
-  const getMinutes = (miliseconds: number): string => {
-    const time = Math.floor(miliseconds / 1000 / 60)
-    return time > 9 ? time.toString() : `0${time}`
-  }
+  console.log(timer)
 
   const handleStartTimer = () => {
     if (timer.mode === TIMER_MODE.WORK && timer.workTime) {
@@ -54,17 +63,39 @@ const Component: React.FC = () => {
     }
   }
 
-  useEffect(() => {
-    window.timerApi.getTime((data: number) => {
-      setSeconds(getSeconds(data))
-      setMinutes(getMinutes(data))
-    })
-  }, [])
+  const transfromToPercentages = (
+    miliseconds: number,
+    divider: number
+  ): number => {
+    return Math.floor((miliseconds * 100) / (divider * 1000 * 60))
+  }
+
+  const getPercentValue = (): number => {
+    if (
+      (timer.status === TIMER_STATUS.PROCESS ||
+        timer.status === TIMER_STATUS.PAUSE) &&
+      timer.mode === TIMER_MODE.WORK &&
+      timer.workTime
+    ) {
+      return transfromToPercentages(miliseconds, timer.workTime)
+    } else if (
+      (timer.status === TIMER_STATUS.PROCESS ||
+        timer.status === TIMER_STATUS.PAUSE) &&
+      timer.mode === TIMER_MODE.REST &&
+      timer.restTime
+    ) {
+      return transfromToPercentages(miliseconds, timer.restTime)
+    }
+
+    return 100
+  }
+
+  console.log(`${minutes} : ${seconds}`)
 
   return (
     <Wrapper>
       <CircularProgressbarWithChildren
-        value={18}
+        value={getPercentValue()}
         strokeWidth={8}
         styles={{
           root: { width: '200px' },
@@ -79,17 +110,28 @@ const Component: React.FC = () => {
       >
         <React.Fragment>
           {timer.status === TIMER_STATUS.IDLE ? (
-            <Button variant="text" size="large" onClick={handleStartTimer}>
-              Start
-            </Button>
+            <ButtonWrapper>
+              <Button variant="text" size="large" onClick={handleStartTimer}>
+                Start
+              </Button>
+            </ButtonWrapper>
           ) : timer.status === TIMER_STATUS.PROCESS ? (
-            <TimeWrapper>
-              <span>{minutes}</span>
-              <span>:</span>
-              <span>{seconds}</span>
-            </TimeWrapper>
+            <TimerInnerWrapper>
+              <TimeWrapper>
+                <span>{minutes}</span>
+                <span>:</span>
+                <span>{seconds}</span>
+              </TimeWrapper>
+            </TimerInnerWrapper>
           ) : (
-            <div>df</div>
+            <TimerInnerWrapper>
+              <TimeWrapper>
+                <span>{minutes}</span>
+                <span>:</span>
+                <span>{seconds}</span>
+              </TimeWrapper>
+              <TimeText>Paused</TimeText>
+            </TimerInnerWrapper>
           )}
         </React.Fragment>
       </CircularProgressbarWithChildren>

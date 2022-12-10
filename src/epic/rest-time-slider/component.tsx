@@ -10,6 +10,10 @@ const Wrapper = styled(Box)`
 
 const marks = [
   {
+    value: 0.12,
+    label: '10s',
+  },
+  {
     value: 5,
     label: '5m',
   },
@@ -37,7 +41,7 @@ const Components: React.FC<IProps> = ({ ariaLabel, value, onChange }) => {
         getAriaValueText={valuetext}
         step={5}
         marks={marks}
-        min={5}
+        min={0.12}
         max={40}
         value={value}
         valueLabelDisplay="on"

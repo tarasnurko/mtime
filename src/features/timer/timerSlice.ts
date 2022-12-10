@@ -5,7 +5,6 @@ import type { RootState } from '../../app/store'
 import { TIMER_MODE, TIMER_STATUS } from './constants'
 
 interface TimerState {
-  time: number
   status: TIMER_STATUS
   mode: TIMER_MODE
   workTime: number
@@ -13,7 +12,6 @@ interface TimerState {
 }
 
 const initialState: TimerState = {
-  time: 0,
   status: TIMER_STATUS.IDLE,
   mode: TIMER_MODE.WORK,
   workTime: 25,
