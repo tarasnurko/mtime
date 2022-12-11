@@ -14,6 +14,7 @@ import { PageContainer } from '../../common/page-container'
 import { Navigation } from '../../epic/navigation'
 import { WorkTimeSlider } from '../../epic/work-time-slider'
 import { RestTimeSlider } from '../../epic/rest-time-slider'
+import { useLocalStorage } from '../../hooks'
 
 const FormContainer = styled(FormGroup)(props => ({
   padding: '20px 40px',
@@ -31,23 +32,55 @@ const SliderContainer = styled(Box)(props => ({
 }))
 
 const Page: React.FC = () => {
+  const [darkMode, setDarkMode] = useLocalStorage<boolean>('darkMode', false)
+  const [defaultWorkTime, setDefaultWorkTime] = useLocalStorage<number>(
+    'defaultWorkTime',
+    25
+  )
+  const [defaultRestTime, setDefaultRestTime] = useLocalStorage<number>(
+    'defaultRestTime',
+    5
+  )
+
   const theme = useTheme()
 
-  const handleWorkTime = () => {}
+  const handleDarkMode = () => {
+    if (!darkMode) {
+      setDarkMode(true)
+    } else {
+      setDarkMode(false)
+    }
+  }
 
-  const handleRestTime = () => {}
+  const handleWorkTime = (event: Event, value: number | number[]) => {
+    if (typeof value === 'number' && defaultWorkTime !== value) {
+      console.log('df')
+      setDefaultWorkTime(value)
+    }
+  }
+
+  const handleRestTime = (event: Event, value: number | number[]) => {
+    if (typeof value === 'number' && defaultRestTime !== value) {
+      console.log('df')
+      setDefaultRestTime(value)
+    }
+  }
 
   return (
     <PageContainer>
       <FormContainer>
-        <FormControlLabel control={<Switch />} label="Dark Mode" />
+        <FormControlLabel
+          control={<Switch checked={darkMode} />}
+          label="Dark Mode"
+          onClick={handleDarkMode}
+        />
         <SliderContainer>
           <Typography id="default-work-time" gutterBottom variant="body2">
             Set Default Work Time
           </Typography>
           <WorkTimeSlider
             ariaLabelledBy="default-work-time"
-            value={5}
+            value={defaultWorkTime}
             onChange={handleWorkTime}
             width="100%"
             valueLabelDisplay="auto"
@@ -59,7 +92,7 @@ const Page: React.FC = () => {
           </Typography>
           <RestTimeSlider
             ariaLabelledBy="default-rest-time"
-            value={5}
+            value={defaultRestTime}
             onChange={handleRestTime}
             width="100%"
             valueLabelDisplay="auto"

@@ -14,8 +14,8 @@ interface TimerState {
 const initialState: TimerState = {
   status: TIMER_STATUS.IDLE,
   mode: TIMER_MODE.WORK,
-  workTime: 25,
-  restTime: 5,
+  workTime: 0,
+  restTime: 0,
 }
 
 export const timerSlice = createSlice({
