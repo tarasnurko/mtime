@@ -58,12 +58,16 @@ const Component: React.FC = () => {
           ariaLabel="timer-work-time"
           value={timer.workTime}
           onChange={handleWorkTimeChange}
+          width="180px"
+          valueLabelDisplay="on"
         />
       ) : (
         <RestTimeSlider
           ariaLabel="timer-rest-time"
           value={timer.restTime}
           onChange={handleRestTimeChange}
+          width="180px"
+          valueLabelDisplay="on"
         />
       )}
     </Wrapper>

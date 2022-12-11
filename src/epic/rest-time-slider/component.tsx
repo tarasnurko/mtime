@@ -3,7 +3,6 @@ import React from 'react'
 import { IProps } from './constatns'
 
 const Wrapper = styled(Box)`
-  width: 180px;
   display: flex;
   align-items: center;
 `
@@ -33,18 +32,26 @@ const marks = [
 
 const valuetext = (value: number) => `${value}m`
 
-const Components: React.FC<IProps> = ({ ariaLabel, value, onChange }) => {
+const Components: React.FC<IProps> = ({
+  ariaLabel,
+  ariaLabelledBy,
+  value,
+  onChange,
+  width,
+  valueLabelDisplay,
+}) => {
   return (
-    <Wrapper>
+    <Wrapper width={width}>
       <Slider
         aria-label={ariaLabel}
+        aria-labelledby={ariaLabelledBy}
         getAriaValueText={valuetext}
         step={5}
         marks={marks}
         min={0.12}
         max={40}
         value={value}
-        valueLabelDisplay="on"
+        valueLabelDisplay={valueLabelDisplay}
         onChange={onChange}
       />
     </Wrapper>

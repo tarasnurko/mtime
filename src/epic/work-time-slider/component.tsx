@@ -1,9 +1,8 @@
-import { Box, Slider, styled } from '@mui/material'
+import { Box, BoxProps, Slider, styled } from '@mui/material'
 import React from 'react'
 import { IProps } from './constatns'
 
-const Wrapper = styled(Box)`
-  width: 180px;
+const Wrapper = styled(Box)<BoxProps>`
   display: flex;
   align-items: center;
 `
@@ -33,18 +32,26 @@ const marks = [
 
 const valuetext = (value: number) => `${value}m`
 
-const Components: React.FC<IProps> = ({ ariaLabel, value, onChange }) => {
+const Components: React.FC<IProps> = ({
+  ariaLabel,
+  ariaLabelledBy,
+  value,
+  onChange,
+  width,
+  valueLabelDisplay,
+}) => {
   return (
-    <Wrapper>
+    <Wrapper width={width}>
       <Slider
         aria-label={ariaLabel}
+        aria-labelledby={ariaLabelledBy}
         getAriaValueText={valuetext}
         step={5}
         marks={marks}
         min={5}
         max={80}
         value={value}
-        valueLabelDisplay="on"
+        valueLabelDisplay={valueLabelDisplay}
         onChange={onChange}
       />
     </Wrapper>
