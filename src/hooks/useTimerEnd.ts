@@ -7,9 +7,16 @@ const useTimerEnd = (): void => {
 
   useEffect(() => {
     const removeEventListener = window.timerApi.getTimerEnd(() => {
+      console.log('timer-end in renderer')
+
       dispatch(setTimerStatus(TIMER_STATUS.IDLE))
-      console.log('timer-end')
+
+      window.timerApi.receiveTimerEnd()
     })
+
+    return () => {
+      removeEventListener()
+    }
   }, [])
 }
 

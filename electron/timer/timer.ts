@@ -1,4 +1,11 @@
-import { ipcMain, IpcMainEvent, ipcRenderer, IpcRendererEvent } from 'electron'
+import {
+  ipcMain,
+  IpcMainEvent,
+  ipcRenderer,
+  IpcRendererEvent,
+  Notification,
+} from 'electron'
+
 import { TIMER_EVENTS, TIMER_STATUS } from './constants'
 
 class Timer {
@@ -33,6 +40,8 @@ class Timer {
   private startPause() {
     this.status = TIMER_STATUS.PAUSE
     this.pauseStartTime = new Date()
+
+    this.clearTimerInterval()
   }
 
   private endPause() {
@@ -48,6 +57,12 @@ class Timer {
 
   private stopTimer() {
     this.resetTimerProps()
+    this.clearTimerInterval()
+  }
+
+  private endTimer() {
+    this.resetTimerProps()
+    this.clearTimerInterval()
   }
 
   // -- calculating functions -- //
@@ -63,13 +78,14 @@ class Timer {
     if (this.timeLeft <= 0) {
       this.emitTimerEnd(_)
       this.clearTimerInterval()
-      this.resetTimerProps()
+      this.endTimerInterval(_)
+      this.showEndTimerNotification()
     }
   }
 
   // -- interval interactions -- //
 
-  private timer(_: IpcMainEvent) {
+  private startTimerInterval(_: IpcMainEvent) {
     this.calcTimeLeft()
     this.emitTimeLeftSend(_)
 
@@ -79,7 +95,7 @@ class Timer {
       this.calcTimerEnd(_)
 
       this.emitTimeLeftSend(_)
-    }, 850)
+    }, 700)
   }
 
   public clearTimerInterval() {
@@ -87,6 +103,12 @@ class Timer {
       clearInterval(this.interval)
       this.interval = null
     }
+  }
+
+  private endTimerInterval(_: IpcMainEvent) {
+    this.interval = setInterval(() => {
+      this.emitTimerEnd(_)
+    }, 200)
   }
 
   // -- ipcRenderer -- //
@@ -105,6 +127,10 @@ class Timer {
 
   public sendStopTimer() {
     ipcRenderer.send(TIMER_EVENTS.STOP_TIMER)
+  }
+
+  public sendReceiveTimerEnd() {
+    ipcRenderer.send(TIMER_EVENTS.RECEIVE_TIMER_END)
   }
 
   // -- go to renderer -- //
@@ -142,6 +168,7 @@ class Timer {
     this.onStartPause()
     this.onEndPause()
     this.onStopTimer()
+    this.onEndTimerReceived()
   }
 
   private onStartTimer() {
@@ -151,7 +178,7 @@ class Timer {
         if (this.status === TIMER_STATUS.IDLE) {
           console.log('onStartTimer')
           this.startTimer(time)
-          this.timer(_)
+          this.startTimerInterval(_)
         }
       }
     )
@@ -162,7 +189,6 @@ class Timer {
       if (this.status === TIMER_STATUS.PROCESS) {
         console.log('onStartPause')
         this.startPause()
-        this.clearTimerInterval()
       }
     })
   }
@@ -172,7 +198,7 @@ class Timer {
       if (this.status === TIMER_STATUS.PAUSE) {
         console.log('onEndPause')
         this.endPause()
-        this.timer(_)
+        this.startTimerInterval(_)
       }
     })
   }
@@ -181,9 +207,37 @@ class Timer {
     ipcMain.on(TIMER_EVENTS.STOP_TIMER, async () => {
       if (this.status !== TIMER_STATUS.IDLE) {
         console.log('onStopTimer')
-        this.clearTimerInterval()
         this.stopTimer()
       }
+    })
+  }
+
+  private onEndTimerReceived() {
+    ipcMain.on(TIMER_EVENTS.RECEIVE_TIMER_END, async () => {
+      if (this.status === TIMER_STATUS.PROCESS) {
+        console.log('onReceiveTimerEnd')
+        this.endTimer()
+      }
+    })
+  }
+
+  // -- notifications -- //
+
+  private showEndTimerNotification() {
+    const notification = new Notification({
+      title: 'Ntime',
+      body: 'Time is up!',
+    })
+
+    notification.show()
+
+    notification.on('click', () => {
+      ipcMain.emit('open-main-window')
+    })
+
+    // doesn't save in notifications list
+    notification.on('close', () => {
+      notification.close()
     })
   }
 }
