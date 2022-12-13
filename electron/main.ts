@@ -1,4 +1,6 @@
-import { app, BrowserWindow, ipcMain } from 'electron'
+import { app, BrowserWindow } from 'electron'
+import { onShowTimerEndNotification } from './notifications'
+import { onMakeProgressBar, onStopProgressBar } from './progressbar'
 import { timer } from './timer'
 
 let mainWindow: BrowserWindow | null
@@ -39,9 +41,12 @@ async function registerListeners() {
 
   timer.registerIpcListeners()
 
-  ipcMain.on('open-main-window', () => {
-    mainWindow?.show()
-  })
+  // -- notifications -- //
+  onShowTimerEndNotification(mainWindow)
+
+  // -- progress bar -//
+  onMakeProgressBar(mainWindow)
+  onStopProgressBar(mainWindow)
 }
 
 app

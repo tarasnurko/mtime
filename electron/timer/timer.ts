@@ -1,15 +1,13 @@
-import {
-  ipcMain,
-  IpcMainEvent,
-  ipcRenderer,
-  IpcRendererEvent,
-  Notification,
-} from 'electron'
+import { ipcMain, IpcMainEvent, ipcRenderer, IpcRendererEvent } from 'electron'
+import { emitShowTimerEndNotification } from '../notifications'
+
+import { emitMakeProgressBar, emitStopProgressBar } from '../progressbar'
 
 import { TIMER_EVENTS, TIMER_STATUS } from './constants'
 
 class Timer {
   private status: TIMER_STATUS
+  private startTime: Date | null
   private endTime: Date | null
   private pauseStartTime: Date | null
   private timeLeft: number | null
@@ -17,6 +15,7 @@ class Timer {
 
   constructor() {
     this.status = TIMER_STATUS.IDLE
+    this.startTime = null
     this.endTime = null
     this.pauseStartTime = null
     this.timeLeft = null
@@ -25,6 +24,7 @@ class Timer {
 
   private resetTimerProps() {
     this.status = TIMER_STATUS.IDLE
+    this.startTime = null
     this.endTime = null
     this.pauseStartTime = null
     this.timeLeft = null
@@ -34,6 +34,7 @@ class Timer {
 
   private startTimer(time: number) {
     this.status = TIMER_STATUS.PROCESS
+    this.startTime = new Date()
     this.endTime = new Date(Date.now() + time)
   }
 
@@ -76,10 +77,13 @@ class Timer {
     if (!this.endTime || !this.timeLeft) return
 
     if (this.timeLeft <= 0) {
-      this.emitTimerEnd(_)
       this.clearTimerInterval()
+
       this.endTimerInterval(_)
+
       this.showEndTimerNotification()
+
+      this.stopProgressBar()
     }
   }
 
@@ -91,6 +95,8 @@ class Timer {
 
     this.interval = setInterval(() => {
       this.calcTimeLeft()
+
+      this.makeProgressBar(_)
 
       this.calcTimerEnd(_)
 
@@ -106,6 +112,8 @@ class Timer {
   }
 
   private endTimerInterval(_: IpcMainEvent) {
+    this.emitTimerEnd(_)
+
     this.interval = setInterval(() => {
       this.emitTimerEnd(_)
     }, 200)
@@ -208,6 +216,7 @@ class Timer {
       if (this.status !== TIMER_STATUS.IDLE) {
         console.log('onStopTimer')
         this.stopTimer()
+        this.stopProgressBar()
       }
     })
   }
@@ -221,24 +230,27 @@ class Timer {
     })
   }
 
+  // -- ipcMain to Main -- //
+
+  private makeProgressBar(_: IpcMainEvent) {
+    emitMakeProgressBar({
+      _,
+      status: this.status,
+      startTime: this.startTime,
+      endTime: this.endTime,
+      timeLeft: this.timeLeft,
+    })
+  }
+
+  private stopProgressBar() {
+    console.log('progressbar ended')
+    emitStopProgressBar()
+  }
+
   // -- notifications -- //
 
   private showEndTimerNotification() {
-    const notification = new Notification({
-      title: 'Ntime',
-      body: 'Time is up!',
-    })
-
-    notification.show()
-
-    notification.on('click', () => {
-      ipcMain.emit('open-main-window')
-    })
-
-    // doesn't save in notifications list
-    notification.on('close', () => {
-      notification.close()
-    })
+    emitShowTimerEndNotification()
   }
 }
 
