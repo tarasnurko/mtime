@@ -1,8 +1,13 @@
 import { ipcMain, IpcMainEvent, ipcRenderer, IpcRendererEvent } from 'electron'
+import { emitShowTimerEndNotification } from '../notifications'
+
+import { emitMakeProgressBar, emitStopProgressBar } from '../progressbar'
+
 import { TIMER_EVENTS, TIMER_STATUS } from './constants'
 
 class Timer {
   private status: TIMER_STATUS
+  private startTime: Date | null
   private endTime: Date | null
   private pauseStartTime: Date | null
   private timeLeft: number | null
@@ -10,6 +15,7 @@ class Timer {
 
   constructor() {
     this.status = TIMER_STATUS.IDLE
+    this.startTime = null
     this.endTime = null
     this.pauseStartTime = null
     this.timeLeft = null
@@ -18,6 +24,7 @@ class Timer {
 
   private resetTimerProps() {
     this.status = TIMER_STATUS.IDLE
+    this.startTime = null
     this.endTime = null
     this.pauseStartTime = null
     this.timeLeft = null
@@ -27,12 +34,15 @@ class Timer {
 
   private startTimer(time: number) {
     this.status = TIMER_STATUS.PROCESS
+    this.startTime = new Date()
     this.endTime = new Date(Date.now() + time)
   }
 
   private startPause() {
     this.status = TIMER_STATUS.PAUSE
     this.pauseStartTime = new Date()
+
+    this.clearTimerInterval()
   }
 
   private endPause() {
@@ -48,6 +58,12 @@ class Timer {
 
   private stopTimer() {
     this.resetTimerProps()
+    this.clearTimerInterval()
+  }
+
+  private endTimer() {
+    this.resetTimerProps()
+    this.clearTimerInterval()
   }
 
   // -- calculating functions -- //
@@ -61,25 +77,31 @@ class Timer {
     if (!this.endTime || !this.timeLeft) return
 
     if (this.timeLeft <= 0) {
-      this.emitTimerEnd(_)
       this.clearTimerInterval()
-      this.resetTimerProps()
+
+      this.endTimerInterval(_)
+
+      this.showEndTimerNotification()
+
+      this.stopProgressBar()
     }
   }
 
   // -- interval interactions -- //
 
-  private timer(_: IpcMainEvent) {
+  private startTimerInterval(_: IpcMainEvent) {
     this.calcTimeLeft()
     this.emitTimeLeftSend(_)
 
     this.interval = setInterval(() => {
       this.calcTimeLeft()
 
+      this.makeProgressBar(_)
+
       this.calcTimerEnd(_)
 
       this.emitTimeLeftSend(_)
-    }, 850)
+    }, 700)
   }
 
   public clearTimerInterval() {
@@ -87,6 +109,14 @@ class Timer {
       clearInterval(this.interval)
       this.interval = null
     }
+  }
+
+  private endTimerInterval(_: IpcMainEvent) {
+    this.emitTimerEnd(_)
+
+    this.interval = setInterval(() => {
+      this.emitTimerEnd(_)
+    }, 200)
   }
 
   // -- ipcRenderer -- //
@@ -105,6 +135,10 @@ class Timer {
 
   public sendStopTimer() {
     ipcRenderer.send(TIMER_EVENTS.STOP_TIMER)
+  }
+
+  public sendReceiveTimerEnd() {
+    ipcRenderer.send(TIMER_EVENTS.RECEIVE_TIMER_END)
   }
 
   // -- go to renderer -- //
@@ -142,6 +176,7 @@ class Timer {
     this.onStartPause()
     this.onEndPause()
     this.onStopTimer()
+    this.onEndTimerReceived()
   }
 
   private onStartTimer() {
@@ -151,7 +186,7 @@ class Timer {
         if (this.status === TIMER_STATUS.IDLE) {
           console.log('onStartTimer')
           this.startTimer(time)
-          this.timer(_)
+          this.startTimerInterval(_)
         }
       }
     )
@@ -162,7 +197,6 @@ class Timer {
       if (this.status === TIMER_STATUS.PROCESS) {
         console.log('onStartPause')
         this.startPause()
-        this.clearTimerInterval()
       }
     })
   }
@@ -172,7 +206,7 @@ class Timer {
       if (this.status === TIMER_STATUS.PAUSE) {
         console.log('onEndPause')
         this.endPause()
-        this.timer(_)
+        this.startTimerInterval(_)
       }
     })
   }
@@ -181,10 +215,42 @@ class Timer {
     ipcMain.on(TIMER_EVENTS.STOP_TIMER, async () => {
       if (this.status !== TIMER_STATUS.IDLE) {
         console.log('onStopTimer')
-        this.clearTimerInterval()
         this.stopTimer()
+        this.stopProgressBar()
       }
     })
+  }
+
+  private onEndTimerReceived() {
+    ipcMain.on(TIMER_EVENTS.RECEIVE_TIMER_END, async () => {
+      if (this.status === TIMER_STATUS.PROCESS) {
+        console.log('onReceiveTimerEnd')
+        this.endTimer()
+      }
+    })
+  }
+
+  // -- ipcMain to Main -- //
+
+  private makeProgressBar(_: IpcMainEvent) {
+    emitMakeProgressBar({
+      _,
+      status: this.status,
+      startTime: this.startTime,
+      endTime: this.endTime,
+      timeLeft: this.timeLeft,
+    })
+  }
+
+  private stopProgressBar() {
+    console.log('progressbar ended')
+    emitStopProgressBar()
+  }
+
+  // -- notifications -- //
+
+  private showEndTimerNotification() {
+    emitShowTimerEndNotification()
   }
 }
 

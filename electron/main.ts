@@ -1,4 +1,6 @@
-import { app, BrowserWindow, ipcMain } from 'electron'
+import { app, BrowserWindow } from 'electron'
+import { onShowTimerEndNotification } from './notifications'
+import { onMakeProgressBar, onStopProgressBar } from './progressbar'
 import { timer } from './timer'
 
 let mainWindow: BrowserWindow | null
@@ -14,9 +16,10 @@ declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string
 function createWindow() {
   mainWindow = new BrowserWindow({
     // icon: path.join(assetsPath, 'assets', 'icon.png'),
-    width: 414,
-    height: 457,
+    width: 700, // 414
+    height: 457, // 457
     backgroundColor: '#fff',
+    title: 'mtime',
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -35,21 +38,15 @@ async function registerListeners() {
   /**
    * This comes from bridge integration, check bridge.ts
    */
-  ipcMain.on('message', (_, message) => {
-    console.log(message)
-  })
-
-  // ipcMain.on('abc', async (_, args) => {
-  //   let num = 0
-  //   console.log('dfdfd')
-  //   const interval = setInterval(() => {
-  //     _.sender.send('getInterval', num)
-  //     num++
-  //   }, 150)
-  //   clearInterval(interval)
-  // })
 
   timer.registerIpcListeners()
+
+  // -- notifications -- //
+  onShowTimerEndNotification(mainWindow)
+
+  // -- progress bar -//
+  onMakeProgressBar(mainWindow)
+  onStopProgressBar(mainWindow)
 }
 
 app

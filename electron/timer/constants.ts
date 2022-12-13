@@ -11,4 +11,5 @@ export enum TIMER_EVENTS {
   END_PAUSE = 'end-pause',
   STOP_TIMER = 'stop-timer',
   END_TIMER = 'end-timer',
+  RECEIVE_TIMER_END = 'receive-timer-end',
 }
