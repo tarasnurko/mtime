@@ -17,9 +17,15 @@ const useGetTime = (): [string, string, number] => {
 
   useEffect(() => {
     const removeEventListener = window.timerApi.getTime((data: number) => {
-      setSeconds(getSeconds(data))
-      setMinutes(getMinutes(data))
-      setMiliseconds(data)
+      if (data <= 0) {
+        setMinutes('00')
+        setSeconds('00')
+      } else {
+        setSeconds(getSeconds(data))
+        setMinutes(getMinutes(data))
+        setMiliseconds(data)
+      }
+
       console.log(data)
     })
 

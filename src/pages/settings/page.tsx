@@ -17,7 +17,7 @@ import { RestTimeSlider } from '../../epic/rest-time-slider'
 import { useLocalStorage } from '../../hooks'
 
 const FormContainer = styled(FormGroup)(props => ({
-  padding: '20px 40px',
+  padding: '20px',
   width: '100%',
   height: '100%',
   display: 'flex',

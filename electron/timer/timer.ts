@@ -77,6 +77,7 @@ class Timer {
     if (!this.endTime || !this.timeLeft) return
 
     if (this.timeLeft <= 0) {
+      console.log('end program')
       this.clearTimerInterval()
 
       this.endTimerInterval(_)
@@ -101,7 +102,7 @@ class Timer {
       this.calcTimerEnd(_)
 
       this.emitTimeLeftSend(_)
-    }, 700)
+    }, 500)
   }
 
   public clearTimerInterval() {
