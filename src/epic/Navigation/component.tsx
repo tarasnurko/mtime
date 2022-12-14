@@ -23,7 +23,7 @@ const Component: React.FC = () => {
   const getPageIndex = () => {
     if (pathname === '/') return 0
     if (pathname === '/stats') return 1
-    if (pathname === 'history') return 2
+    if (pathname === '/history') return 2
     if (pathname === '/settings') return 3
   }
 
@@ -31,6 +31,7 @@ const Component: React.FC = () => {
     <Container elevation={3}>
       <BottomNavigation showLabels value={getPageIndex()}>
         <BottomNavigationAction
+          sx={{ padding: 0, minWidth: 70 }}
           label="Main"
           icon={<TimerOutlinedIcon />}
           component={Link}
@@ -38,18 +39,21 @@ const Component: React.FC = () => {
         />
 
         <BottomNavigationAction
+          sx={{ padding: 0, minWidth: 70 }}
           label="Stats"
           icon={<DataSaverOffOutlinedIcon />}
           component={Link}
           to="/stats"
         />
         <BottomNavigationAction
+          sx={{ padding: 0, minWidth: 70 }}
           label="History"
           icon={<HistoryOutlinedIcon />}
           component={Link}
           to="/history"
         />
         <BottomNavigationAction
+          sx={{ padding: 0, minWidth: 70 }}
           label="Settings"
           icon={<SettingsOutlinedIcon />}
           component={Link}
