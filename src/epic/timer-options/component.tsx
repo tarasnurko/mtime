@@ -9,20 +9,29 @@ import {
   TIMER_MODE,
   selectTimer,
 } from '../../features/timer'
+
 import { useLocalStorage } from '../../hooks'
+
+import { Container, Box, MenuItem, Select, styled } from '@mui/material'
 
 import { RestTimeSlider } from '../rest-time-slider'
 import { WorkTimeSlider } from '../work-time-slider'
-
-import { Container, MenuItem, Select, styled } from '@mui/material'
+import Typography from '@mui/material/Typography'
 
 const Wrapper = styled(Container)`
   padding: 0;
   width: 100%;
-  margin-top: 40px;
+  margin-top: 10px;
   display: flex;
+  flex-direction: column;
+  gap: 10px;
+`
+
+const SelectWrapper = styled(Box)`
+  width: 100%;
+  display: flex;
+  gap: 10px;
   align-items: center;
-  justify-content: space-between;
 `
 
 const Component: React.FC = () => {
@@ -61,30 +70,35 @@ const Component: React.FC = () => {
 
   return (
     <Wrapper>
-      <Select
-        value={timer.mode}
-        size="small"
-        variant="outlined"
-        onChange={handleChange}
-      >
-        <MenuItem value={TIMER_MODE.WORK}>work</MenuItem>
-        <MenuItem value={TIMER_MODE.REST}>rest</MenuItem>
-      </Select>
+      <SelectWrapper>
+        <Select
+          value={timer.mode}
+          size="small"
+          variant="outlined"
+          onChange={handleChange}
+        >
+          <MenuItem value={TIMER_MODE.WORK}>work</MenuItem>
+          <MenuItem value={TIMER_MODE.REST}>rest</MenuItem>
+        </Select>
+        <Typography variant="h6">
+          {timer.mode === TIMER_MODE.WORK ? timer.workTime : timer.restTime}m
+        </Typography>
+      </SelectWrapper>
       {timer.mode === TIMER_MODE.WORK ? (
         <WorkTimeSlider
           ariaLabel="timer-work-time"
           value={timer.workTime}
           onChange={handleWorkTimeChange}
-          width="180px"
-          valueLabelDisplay="on"
+          width="100%"
+          valueLabelDisplay="auto"
         />
       ) : (
         <RestTimeSlider
           ariaLabel="timer-rest-time"
           value={timer.restTime}
           onChange={handleRestTimeChange}
-          width="180px"
-          valueLabelDisplay="on"
+          width="100%"
+          valueLabelDisplay="auto"
         />
       )}
     </Wrapper>
