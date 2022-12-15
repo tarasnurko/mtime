@@ -80,7 +80,9 @@ class Timer {
       console.log('end program')
       this.clearTimerInterval()
 
-      this.endTimerInterval(_)
+      this.emitTimerEnd(_)
+
+      this.endTimer()
 
       this.showEndTimerNotification()
 
@@ -112,14 +114,6 @@ class Timer {
     }
   }
 
-  private endTimerInterval(_: IpcMainEvent) {
-    this.emitTimerEnd(_)
-
-    this.interval = setInterval(() => {
-      this.emitTimerEnd(_)
-    }, 200)
-  }
-
   // -- ipcRenderer -- //
 
   public sendStartTimer(time: number) {
@@ -136,10 +130,6 @@ class Timer {
 
   public sendStopTimer() {
     ipcRenderer.send(TIMER_EVENTS.STOP_TIMER)
-  }
-
-  public sendReceiveTimerEnd() {
-    ipcRenderer.send(TIMER_EVENTS.RECEIVE_TIMER_END)
   }
 
   // -- go to renderer -- //
@@ -177,7 +167,6 @@ class Timer {
     this.onStartPause()
     this.onEndPause()
     this.onStopTimer()
-    this.onEndTimerReceived()
   }
 
   private onStartTimer() {
@@ -218,15 +207,6 @@ class Timer {
         console.log('onStopTimer')
         this.stopTimer()
         this.stopProgressBar()
-      }
-    })
-  }
-
-  private onEndTimerReceived() {
-    ipcMain.on(TIMER_EVENTS.RECEIVE_TIMER_END, async () => {
-      if (this.status === TIMER_STATUS.PROCESS) {
-        console.log('onReceiveTimerEnd')
-        this.endTimer()
       }
     })
   }

@@ -1,8 +1,8 @@
 import React from 'react'
-import { Outlet } from 'react-router-dom'
 
 import { Container, styled } from '@mui/material'
 import { Navigation } from '../navigation'
+import { TimerOutlet } from '../timer-outler'
 
 const PageContainer = styled(Container)`
   width: 100%;
@@ -14,7 +14,7 @@ const PageContainer = styled(Container)`
 const Component = () => {
   return (
     <PageContainer>
-      <Outlet />
+      <TimerOutlet />
       <Navigation />
     </PageContainer>
   )

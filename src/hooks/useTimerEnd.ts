@@ -10,8 +10,6 @@ const useTimerEnd = (): void => {
       console.log('timer-end in renderer')
 
       dispatch(setTimerStatus(TIMER_STATUS.IDLE))
-
-      window.timerApi.receiveTimerEnd()
     })
 
     return () => {

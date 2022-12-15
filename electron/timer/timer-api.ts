@@ -5,7 +5,6 @@ export const timerApi = {
   startPause: timer.sendStartPause,
   endPause: timer.sendEndPause,
   stopTimer: timer.sendStopTimer,
-  receiveTimerEnd: timer.sendReceiveTimerEnd,
 
   getTime: timer.getTime,
   getTimerEnd: timer.getTimerEnd,

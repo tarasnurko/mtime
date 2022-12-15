@@ -44,14 +44,13 @@ const TimeText = styled('span')`
 
 const Component: React.FC = () => {
   const [minutes, seconds, miliseconds] = useGetTime()
-  useTimerEnd()
 
   const theme = useTheme()
 
   const timer = useAppSelector(selectTimer)
   const dispatch = useAppDispatch()
 
-  console.log(timer)
+  // console.log(timer)
 
   const handleStartTimer = () => {
     if (timer.mode === TIMER_MODE.WORK && timer.workTime) {
@@ -90,7 +89,7 @@ const Component: React.FC = () => {
     return 100
   }
 
-  console.log(`${minutes} : ${seconds}`)
+  // console.log(`${minutes} : ${seconds}`)
 
   return (
     <Wrapper>
