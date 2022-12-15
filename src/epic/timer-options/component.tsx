@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
 
@@ -10,13 +10,17 @@ import {
   selectTimer,
 } from '../../features/timer'
 
-import { useLocalStorage } from '../../hooks'
-
-import { Container, Box, MenuItem, Select, styled } from '@mui/material'
+import {
+  Container,
+  Box,
+  MenuItem,
+  Select,
+  Typography,
+  styled,
+} from '@mui/material'
 
 import { RestTimeSlider } from '../rest-time-slider'
 import { WorkTimeSlider } from '../work-time-slider'
-import Typography from '@mui/material/Typography'
 
 const Wrapper = styled(Container)`
   padding: 0;
@@ -35,9 +39,6 @@ const SelectWrapper = styled(Box)`
 `
 
 const Component: React.FC = () => {
-  const [defaultWorkTime] = useLocalStorage<number>('defaultWorkTime', 25)
-  const [defaultRestTime] = useLocalStorage<number>('defaultRestTime', 5)
-
   const timer = useAppSelector(selectTimer)
   const dispatch = useAppDispatch()
 
@@ -56,17 +57,6 @@ const Component: React.FC = () => {
       dispatch(setRestTime(value))
     }
   }
-
-  useEffect(() => {
-    if (!timer.workTime) {
-      dispatch(setWorkTime(defaultWorkTime))
-    }
-    if (!timer.restTime) {
-      dispatch(setRestTime(defaultRestTime))
-    }
-  }, [])
-
-  console.log(timer)
 
   return (
     <Wrapper>

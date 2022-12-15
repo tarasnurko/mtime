@@ -2,7 +2,7 @@ import React from 'react'
 
 import { Container, styled } from '@mui/material'
 import { Navigation } from '../navigation'
-import { TimerOutlet } from '../timer-outler'
+import { Base } from '../base'
 
 const PageContainer = styled(Container)`
   width: 100%;
@@ -14,7 +14,7 @@ const PageContainer = styled(Container)`
 const Component = () => {
   return (
     <PageContainer>
-      <TimerOutlet />
+      <Base />
       <Navigation />
     </PageContainer>
   )
