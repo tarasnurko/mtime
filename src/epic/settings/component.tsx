@@ -49,14 +49,12 @@ const Component: React.FC = () => {
 
   const handleWorkTime = (event: Event, value: number | number[]) => {
     if (typeof value === 'number' && defaultWorkTime !== value) {
-      console.log('df')
       setDefaultWorkTime(value)
     }
   }
 
   const handleRestTime = (event: Event, value: number | number[]) => {
     if (typeof value === 'number' && defaultRestTime !== value) {
-      console.log('df')
       setDefaultRestTime(value)
     }
   }

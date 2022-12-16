@@ -2,11 +2,12 @@ import React from 'react'
 import { Button, Container, Box, styled, useTheme } from '@mui/material'
 import { CircularProgressbarWithChildren } from 'react-circular-progressbar'
 
-import { useGetTime, useTimerEnd } from '../../hooks'
+import { useGetTime } from '../../hooks'
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
 import {
   selectTimer,
   setTimerStatus,
+  setStartTime,
   TIMER_MODE,
   TIMER_STATUS,
 } from '../../features/timer'
@@ -53,13 +54,13 @@ const Component: React.FC = () => {
   // console.log(timer)
 
   const handleStartTimer = () => {
-    if (timer.mode === TIMER_MODE.WORK && timer.workTime) {
-      dispatch(setTimerStatus(TIMER_STATUS.PROCESS))
+    if (timer.mode === TIMER_MODE.WORK) {
       window.timerApi.startTimer(timer.workTime * 60 * 1000)
-    } else if (timer.mode === TIMER_MODE.REST && timer.restTime) {
-      dispatch(setTimerStatus(TIMER_STATUS.PROCESS))
+    } else if (timer.mode === TIMER_MODE.REST) {
       window.timerApi.startTimer(timer.restTime * 60 * 1000)
     }
+    dispatch(setTimerStatus(TIMER_STATUS.PROCESS))
+    dispatch(setStartTime(Date.now()))
   }
 
   const transfromToPercentages = (
@@ -89,7 +90,11 @@ const Component: React.FC = () => {
     return 100
   }
 
-  // console.log(`${minutes} : ${seconds}`)
+  // console.log(
+  //   `${new Date(timer.startTime).getMinutes()}:${new Date(
+  //     timer.startTime
+  //   ).getSeconds()}`
+  // )
 
   return (
     <Wrapper>
