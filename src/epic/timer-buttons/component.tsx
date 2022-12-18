@@ -1,5 +1,6 @@
 import React from 'react'
 import { Box, Button, styled } from '@mui/material'
+
 import { useAppSelector, useAppDispatch } from '../../app/hooks'
 import {
   selectTimer,
@@ -12,6 +13,8 @@ import {
 
 import { useLocalStorage } from '../../hooks'
 
+import { IHistory } from '../history-table'
+
 const ButtonWrapper = styled(Box)`
   margin-top: 20px;
   display: flex;
@@ -20,7 +23,7 @@ const ButtonWrapper = styled(Box)`
 `
 
 const Component: React.FC = () => {
-  const [history, setHistory] = useLocalStorage<any[]>('history', [])
+  const [history, setHistory] = useLocalStorage<IHistory>('history', [])
 
   const timer = useAppSelector(selectTimer)
   const dispatch = useAppDispatch()
@@ -40,17 +43,22 @@ const Component: React.FC = () => {
   const handleStop = () => {
     window.timerApi.stopTimer()
 
+    if (timer.status === TIMER_STATUS.PAUSE) {
+      dispatch(endPause(Date.now()))
+    }
+
     setHistory(prevValue => [
-      ...prevValue,
       {
         startTime: timer.startTime,
         endTime: Date.now(),
         mode: timer.mode,
         completed: false,
       },
+      ...prevValue,
     ])
 
     dispatch(setTimerStatus(TIMER_STATUS.IDLE))
+    dispatch(resetTime())
   }
 
   return (

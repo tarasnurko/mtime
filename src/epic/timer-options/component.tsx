@@ -25,7 +25,6 @@ import { WorkTimeSlider } from '../work-time-slider'
 const Wrapper = styled(Container)`
   padding: 0;
   width: 100%;
-  margin-top: 10px;
   display: flex;
   flex-direction: column;
   gap: 10px;

@@ -1,21 +1,20 @@
 import React from 'react'
-
 import { Container, styled } from '@mui/material'
 
-import { Settings } from '../../epic/settings'
+import { HistoryTable } from '../../epic/history-table'
 
 const Wrapper = styled(Container)`
   width: 100%;
   height: 100%;
-  padding: 30px;
   display: flex;
   flex-direction: column;
+  padding: 0;
 `
 
-const Page: React.FC = () => {
+const Page = () => {
   return (
     <Wrapper>
-      <Settings />
+      <HistoryTable />
     </Wrapper>
   )
 }

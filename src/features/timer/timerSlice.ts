@@ -48,6 +48,7 @@ export const timerSlice = createSlice({
     endPause: (state, action: PayloadAction<number>) => {
       if (state.pauseTime) {
         state.startTime = state.startTime + (action.payload - state.pauseTime)
+        state.pauseTime = 0
       }
     },
     resetTime: state => {
