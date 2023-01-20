@@ -60,8 +60,6 @@ const onMakeProgressBar = (browserWindow: BrowserWindow | null) => {
 
         if (percentageTimeLeft < 0.01) percentageTimeLeft = 0.01
 
-        console.log(`ProgressBar: ${percentageTimeLeft}`)
-
         browserWindow?.setProgressBar(percentageTimeLeft)
       }
     }

@@ -77,7 +77,6 @@ class Timer {
     if (!this.endTime || !this.timeLeft) return
 
     if (this.timeLeft <= 0) {
-      console.log('end program')
       this.clearTimerInterval()
 
       this.emitTimerEnd(_)
@@ -174,7 +173,6 @@ class Timer {
       TIMER_EVENTS.START_TIMER,
       async (_: IpcMainEvent, time: number) => {
         if (this.status === TIMER_STATUS.IDLE) {
-          console.log('onStartTimer')
           this.startTimer(time)
           this.startTimerInterval(_)
         }
@@ -185,7 +183,6 @@ class Timer {
   private onStartPause() {
     ipcMain.on(TIMER_EVENTS.START_PAUSE, async () => {
       if (this.status === TIMER_STATUS.PROCESS) {
-        console.log('onStartPause')
         this.startPause()
       }
     })
@@ -194,7 +191,6 @@ class Timer {
   private onEndPause() {
     ipcMain.on(TIMER_EVENTS.END_PAUSE, async (_: IpcMainEvent) => {
       if (this.status === TIMER_STATUS.PAUSE) {
-        console.log('onEndPause')
         this.endPause()
         this.startTimerInterval(_)
       }
@@ -204,7 +200,6 @@ class Timer {
   private onStopTimer() {
     ipcMain.on(TIMER_EVENTS.STOP_TIMER, async () => {
       if (this.status !== TIMER_STATUS.IDLE) {
-        console.log('onStopTimer')
         this.stopTimer()
         this.stopProgressBar()
       }
@@ -224,7 +219,6 @@ class Timer {
   }
 
   private stopProgressBar() {
-    console.log('progressbar ended')
     emitStopProgressBar()
   }
 

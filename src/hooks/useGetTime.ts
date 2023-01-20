@@ -25,8 +25,6 @@ const useGetTime = (): [string, string, number] => {
         setMinutes(getMinutes(data))
         setMiliseconds(data)
       }
-
-      // console.log(data)
     })
 
     return () => {

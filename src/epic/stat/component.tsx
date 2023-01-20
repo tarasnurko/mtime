@@ -52,7 +52,7 @@ const Component: React.FC<IProps> = ({ title, stats }) => {
               sx={{ marginTop: '10px', alignItems: 'center' }}
               columnSpacing={1}
             >
-              <Grid item xs={5}>
+              <Grid item xs={6}>
                 <Box sx={{ width: '100%' }}>
                   <CircularProgressbarWithChildren
                     value={workPercentage}
@@ -87,7 +87,7 @@ const Component: React.FC<IProps> = ({ title, stats }) => {
                   </CircularProgressbarWithChildren>
                 </Box>
               </Grid>
-              <Grid item xs={7}>
+              <Grid item xs={6}>
                 <Box
                   sx={{
                     width: '100%',

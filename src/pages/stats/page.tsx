@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-
+import { useSearchParams } from 'react-router-dom'
 import { Container, styled } from '@mui/material'
 
 import { StatsOption } from '../../epic/stats-option'
@@ -37,18 +37,23 @@ interface StatValues {
 
 const Page: React.FC = () => {
   const [history] = useLocalStorage<IHistory>('history', [])
+  const [searchParams] = useSearchParams()
 
-  const [statDate, setStatDate] = useState<string>(
-    `${new Date().getFullYear()}-${
-      new Date().getMonth() + 1 < 10
-        ? `0${new Date().getMonth() + 1}`
-        : new Date().getMonth() + 1
-    }-${
-      new Date().getDate() < 10
-        ? `0${new Date().getDate()}`
-        : new Date().getDate()
-    }`
-  )
+  const [statDate, setStatDate] = useState<string>(() => {
+    const paramTimestamp = searchParams.get('date')
+
+    const date =
+      paramTimestamp && !isNaN(+paramTimestamp)
+        ? new Date(+paramTimestamp)
+        : new Date()
+
+    const year = date.getFullYear()
+    const month =
+      date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1
+    const day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()
+
+    return `${year}-${month}-${day}`
+  })
 
   const [dayStats, setDayStats] = useState<StatValues>({
     workTime: 0,

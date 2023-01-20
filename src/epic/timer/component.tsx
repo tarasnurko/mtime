@@ -51,8 +51,6 @@ const Component: React.FC = () => {
   const timer = useAppSelector(selectTimer)
   const dispatch = useAppDispatch()
 
-  // console.log(timer)
-
   const handleStartTimer = () => {
     if (timer.mode === TIMER_MODE.WORK) {
       window.timerApi.startTimer(timer.workTime * 60 * 1000)
@@ -89,12 +87,6 @@ const Component: React.FC = () => {
 
     return 100
   }
-
-  // console.log(
-  //   `${new Date(timer.startTime).getMinutes()}:${new Date(
-  //     timer.startTime
-  //   ).getSeconds()}`
-  // )
 
   return (
     <Wrapper>

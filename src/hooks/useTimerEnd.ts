@@ -20,8 +20,6 @@ const useTimerEnd = (): void => {
 
   useEffect(() => {
     const removeEventListener = window.timerApi.getTimerEnd(() => {
-      console.log('timer-end in renderer')
-
       setHistory(prevValue => [
         {
           startTime: timer.startTime,

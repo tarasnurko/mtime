@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Link } from 'react-router-dom'
 
 import {
   Container,
@@ -173,19 +174,23 @@ const Component: React.FC = () => {
                           whiteSpace: 'nowrap',
                         }}
                       >
-                        {column.id === 'timeSpent'
-                          ? column.format(row.startTime, row.endTime)
-                          : column.id === 'date'
-                          ? column.format(row.startTime)
-                          : column.id === 'startTime'
-                          ? column.format(row.startTime)
-                          : column.id === 'endTime'
-                          ? column.format(row.endTime)
-                          : column.id === 'mode'
-                          ? column.format(row.mode)
-                          : column.id === 'completed'
-                          ? column.format(row.completed)
-                          : ''}
+                        {column.id === 'timeSpent' ? (
+                          column.format(row.startTime, row.endTime)
+                        ) : column.id === 'date' ? (
+                          <Link to={`/stats?date=${row.startTime}`}>
+                            {column.format(row.startTime)}
+                          </Link>
+                        ) : column.id === 'startTime' ? (
+                          column.format(row.startTime)
+                        ) : column.id === 'endTime' ? (
+                          column.format(row.endTime)
+                        ) : column.id === 'mode' ? (
+                          column.format(row.mode)
+                        ) : column.id === 'completed' ? (
+                          column.format(row.completed)
+                        ) : (
+                          ''
+                        )}
                       </TableCell>
                     )
                   })}
