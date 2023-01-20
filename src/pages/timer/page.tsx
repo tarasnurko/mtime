@@ -11,8 +11,10 @@ import { TimerOptions } from '../../epic/timer-options'
 const Wrapper = styled(Container)`
   width: 100%;
   height: 100%;
+  padding: 20px 30px 0 30px;
   display: flex;
   flex-direction: column;
+  gap: 10px;
 `
 
 const Page: React.FC = () => {

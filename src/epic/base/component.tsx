@@ -11,9 +11,10 @@ const Component: React.FC = () => {
   const [defaultWorkTime] = useLocalStorage<number>('defaultWorkTime', 25)
   const [defaultRestTime] = useLocalStorage<number>('defaultRestTime', 5)
 
+  useTimerEnd()
+
   const timer = useAppSelector(selectTimer)
   const dispatch = useAppDispatch()
-  useTimerEnd()
 
   useEffect(() => {
     if (!timer.workTime) {
@@ -23,8 +24,6 @@ const Component: React.FC = () => {
       dispatch(setRestTime(defaultRestTime))
     }
   }, [])
-
-  console.log(timer)
 
   return <Outlet />
 }

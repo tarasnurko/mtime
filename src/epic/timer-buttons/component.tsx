@@ -1,7 +1,19 @@
 import React from 'react'
 import { Box, Button, styled } from '@mui/material'
-import { useAppDispatch, useAppSelector } from '../../app/hooks'
-import { selectTimer, setTimerStatus, TIMER_STATUS } from '../../features/timer'
+
+import { useAppSelector, useAppDispatch } from '../../app/hooks'
+import {
+  selectTimer,
+  setTimerStatus,
+  startPause,
+  endPause,
+  resetTime,
+  TIMER_STATUS,
+} from '../../features/timer'
+
+import { useLocalStorage } from '../../hooks'
+
+import { IHistory } from '../history-table'
 
 const ButtonWrapper = styled(Box)`
   margin-top: 20px;
@@ -11,23 +23,42 @@ const ButtonWrapper = styled(Box)`
 `
 
 const Component: React.FC = () => {
-  const dispatch = useAppDispatch()
+  const [history, setHistory] = useLocalStorage<IHistory>('history', [])
 
   const timer = useAppSelector(selectTimer)
+  const dispatch = useAppDispatch()
 
   const handlePause = () => {
-    dispatch(setTimerStatus(TIMER_STATUS.PAUSE))
     window.timerApi.startPause()
+    dispatch(setTimerStatus(TIMER_STATUS.PAUSE))
+    dispatch(startPause(Date.now()))
   }
 
   const handleContinue = () => {
-    dispatch(setTimerStatus(TIMER_STATUS.PROCESS))
     window.timerApi.endPause()
+    dispatch(setTimerStatus(TIMER_STATUS.PROCESS))
+    dispatch(endPause(Date.now()))
   }
 
   const handleStop = () => {
-    dispatch(setTimerStatus(TIMER_STATUS.IDLE))
     window.timerApi.stopTimer()
+
+    if (timer.status === TIMER_STATUS.PAUSE) {
+      dispatch(endPause(Date.now()))
+    }
+
+    setHistory(prevValue => [
+      {
+        startTime: timer.startTime,
+        endTime: Date.now(),
+        mode: timer.mode,
+        completed: false,
+      },
+      ...prevValue,
+    ])
+
+    dispatch(setTimerStatus(TIMER_STATUS.IDLE))
+    dispatch(resetTime())
   }
 
   return (
