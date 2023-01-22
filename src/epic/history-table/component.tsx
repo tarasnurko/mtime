@@ -12,6 +12,8 @@ import {
   TableRow,
   useTheme,
 } from '@mui/material'
+import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
+
 import { useLocalStorage } from '../../hooks'
 import { IHistory } from './constants'
 
@@ -47,12 +49,17 @@ interface CompletedColumn extends BaseColumnPops {
   format: (value: boolean) => string
 }
 
+interface DeleteColumn extends BaseColumnPops {
+  id: 'delete'
+}
+
 type Column =
   | DateColumn
   | SpentColumn
   | TimeColumn
   | ModeColumn
   | CompletedColumn
+  | DeleteColumn
 
 const columns: Column[] = [
   {
@@ -101,10 +108,14 @@ const columns: Column[] = [
     label: 'Compleated',
     format: value => (value ? 'compleated' : 'not compleated'),
   },
+  {
+    id: 'delete',
+    label: 'Delete',
+  },
 ]
 
 const Component: React.FC = () => {
-  const [history] = useLocalStorage<IHistory>('history', [])
+  const [history, setHistory] = useLocalStorage<IHistory>('history', [])
   const theme = useTheme()
 
   const [page, setPage] = useState(0)
@@ -119,6 +130,12 @@ const Component: React.FC = () => {
   ) => {
     setRowsPerPage(+event.target.value)
     setPage(0)
+  }
+
+  const handleDelete = (startTime: number) => {
+    setHistory(prev => {
+      return prev.filter(item => item.startTime !== startTime)
+    })
   }
 
   return (
@@ -165,7 +182,7 @@ const Component: React.FC = () => {
           </TableHead>
           <TableBody>
             {history
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row, index) => (
                 <TableRow hover key={index}>
                   {columns.map(column => {
@@ -205,6 +222,11 @@ const Component: React.FC = () => {
                           >
                             {column.format(row.completed)}
                           </span>
+                        ) : column.id === 'delete' ? (
+                          <DeleteOutlineOutlinedIcon
+                            onClick={() => handleDelete(row.startTime)}
+                            sx={{ cursor: 'pointer' }}
+                          />
                         ) : (
                           ''
                         )}
