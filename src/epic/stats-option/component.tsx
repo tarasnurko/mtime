@@ -14,20 +14,20 @@ const DateLabel = styled('label')({
   userSelect: 'none',
 })
 
-const DateInput = styled('input')({
+const DateInput = styled('input')(({ theme }) => ({
   width: '100%',
-  // fontFamily: 'Roboto', sans-serif;
   display: 'block',
   borderRadius: '0.25rem',
   border: '1px solid transparent',
   lineHeight: '1rem',
   padding: 0,
   fontSize: '1rem',
-  color: '#000',
+  color: theme.palette.text.primary,
   marginTop: '0.5rem',
   position: 'relative',
   overflow: 'visible',
   userSelect: 'none',
+  backgroundColor: 'transparent',
 
   '&:focus': {
     outline: 'none',
@@ -44,7 +44,7 @@ const DateInput = styled('input')({
     left: '-37px',
     userSelect: 'none',
   },
-})
+}))
 
 interface IProps {
   value: string

@@ -11,6 +11,7 @@ import {
   TIMER_MODE,
   TIMER_STATUS,
 } from '../../features/timer'
+import Typography from '@mui/material/Typography/Typography'
 
 const Wrapper = styled(Container)`
   width: 200px;
@@ -18,6 +19,7 @@ const Wrapper = styled(Container)`
   display: flex;
   justify-content: center;
   align-items: center;
+  color: 'text.primary';
 `
 
 const ButtonWrapper = styled(Box)`
@@ -29,18 +31,7 @@ const TimerInnerWrapper = styled(Box)`
   display: flex;
   flex-direction: column;
   align-items: center;
-`
-
-const TimeWrapper = styled(Box)`
-  display: flex;
-  gap: 5px;
-  font-size: 28px;
-  font-weight: 600;
-`
-
-const TimeText = styled('span')`
-  font-size: 22px;
-  font-weight: 500;
+  color: 'text.primary';
 `
 
 const Component: React.FC = () => {
@@ -88,6 +79,15 @@ const Component: React.FC = () => {
     return 100
   }
 
+  const strokeColor =
+    timer.mode === TIMER_MODE.WORK && theme.palette.mode === 'light'
+      ? theme.palette.primary.light
+      : timer.mode === TIMER_MODE.REST && theme.palette.mode === 'light'
+      ? theme.palette.secondary.light
+      : timer.mode === TIMER_MODE.WORK && theme.palette.mode === 'dark'
+      ? theme.palette.primary.dark
+      : theme.palette.secondary.dark
+
   return (
     <Wrapper>
       <CircularProgressbarWithChildren
@@ -97,10 +97,7 @@ const Component: React.FC = () => {
           root: { width: '200px' },
           trail: { stroke: theme.palette.grey[300] },
           path: {
-            stroke:
-              timer.mode === TIMER_MODE.WORK
-                ? theme.palette.primary.light
-                : theme.palette.secondary.light,
+            stroke: strokeColor,
           },
         }}
       >
@@ -113,20 +110,36 @@ const Component: React.FC = () => {
             </ButtonWrapper>
           ) : timer.status === TIMER_STATUS.PROCESS ? (
             <TimerInnerWrapper>
-              <TimeWrapper>
-                <span>{minutes}</span>
-                <span>:</span>
-                <span>{seconds}</span>
-              </TimeWrapper>
+              <Box
+                sx={{
+                  display: 'flex',
+                  gap: '5px',
+                  color: 'text.primary',
+                  fontSize: '28px',
+                }}
+              >
+                <Typography sx={{ fontSize: '28px' }}>{minutes}</Typography>
+                <Typography sx={{ fontSize: '28px' }}>:</Typography>
+                <Typography sx={{ fontSize: '28px' }}>{seconds}</Typography>
+              </Box>
             </TimerInnerWrapper>
           ) : (
             <TimerInnerWrapper>
-              <TimeWrapper>
-                <span>{minutes}</span>
-                <span>:</span>
-                <span>{seconds}</span>
-              </TimeWrapper>
-              <TimeText>Paused</TimeText>
+              <Box
+                sx={{
+                  display: 'flex',
+                  gap: '5px',
+                  color: 'text.primary',
+                  fontSize: '28px',
+                }}
+              >
+                <Typography sx={{ fontSize: '28px' }}>{minutes}</Typography>
+                <Typography sx={{ fontSize: '28px' }}>:</Typography>
+                <Typography sx={{ fontSize: '28px' }}>{seconds}</Typography>
+              </Box>
+              <Typography sx={{ fontSize: '24px', color: 'text.primary' }}>
+                Paused
+              </Typography>
             </TimerInnerWrapper>
           )}
         </React.Fragment>

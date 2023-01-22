@@ -10,6 +10,7 @@ import {
   TableHead,
   TablePagination,
   TableRow,
+  useTheme,
 } from '@mui/material'
 import { useLocalStorage } from '../../hooks'
 import { IHistory } from './constants'
@@ -104,6 +105,7 @@ const columns: Column[] = [
 
 const Component: React.FC = () => {
   const [history] = useLocalStorage<IHistory>('history', [])
+  const theme = useTheme()
 
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(10)
@@ -129,13 +131,17 @@ const Component: React.FC = () => {
             height: '0.4em',
           },
           '&::-webkit-scrollbar-track': {
-            background: '#f1f1f1',
+            background:
+              theme.palette.mode === 'light'
+                ? '#f1f1f1'
+                : theme.palette.background.default,
           },
           '&::-webkit-scrollbar-thumb': {
-            backgroundColor: '#888',
+            backgroundColor:
+              theme.palette.mode === 'light' ? '#888' : '#f1f1f1',
           },
           '&::-webkit-scrollbar-thumb:hover': {
-            background: '#555',
+            background: theme.palette.mode === 'light' ? '#555' : '#fbfbfb',
           },
         }}
       >
@@ -177,7 +183,10 @@ const Component: React.FC = () => {
                         {column.id === 'timeSpent' ? (
                           column.format(row.startTime, row.endTime)
                         ) : column.id === 'date' ? (
-                          <Link to={`/stats?date=${row.startTime}`}>
+                          <Link
+                            to={`/stats?date=${row.startTime}`}
+                            style={{ color: theme.palette.text.primary }}
+                          >
                             {column.format(row.startTime)}
                           </Link>
                         ) : column.id === 'startTime' ? (
@@ -187,7 +196,15 @@ const Component: React.FC = () => {
                         ) : column.id === 'mode' ? (
                           column.format(row.mode)
                         ) : column.id === 'completed' ? (
-                          column.format(row.completed)
+                          <span
+                            style={{
+                              color: row.completed
+                                ? theme.palette.success.main
+                                : theme.palette.error.main,
+                            }}
+                          >
+                            {column.format(row.completed)}
+                          </span>
                         ) : (
                           ''
                         )}

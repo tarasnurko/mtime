@@ -6,17 +6,13 @@ import { HashRouter } from 'react-router-dom'
 import { App } from './App'
 import { store } from './app/store'
 
-const theme = createTheme()
-
 ReactDOM.render(
   <React.StrictMode>
     <HashRouter>
       <CssBaseline />
-      <ThemeProvider theme={theme}>
-        <Provider store={store}>
-          <App />
-        </Provider>
-      </ThemeProvider>
+      <Provider store={store}>
+        <App />
+      </Provider>
     </HashRouter>
   </React.StrictMode>,
   document.getElementById('root')

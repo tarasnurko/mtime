@@ -12,24 +12,26 @@ import {
 import { WorkTimeSlider } from '../../epic/work-time-slider'
 import { RestTimeSlider } from '../../epic/rest-time-slider'
 import { useLocalStorage } from '../../hooks'
+import { useAppDispatch } from '../../app/hooks'
+import { setDarkMode } from '../../features/darkMode'
 
-const FormContainer = styled(FormGroup)(props => ({
+const FormContainer = styled(FormGroup)({
   padding: '10px',
   width: '100%',
   height: '100%',
   display: 'flex',
   flexDirection: 'column',
   gap: 24,
-}))
+})
 
-const SliderContainer = styled(Box)(props => ({
+const SliderContainer = styled(Box)({
   width: '100%',
   display: 'flex',
   flexDirection: 'column',
-}))
+})
 
 const Component: React.FC = () => {
-  const [darkMode, setDarkMode] = useLocalStorage<boolean>('darkMode', false)
+  const [darkMode, setDark] = useLocalStorage<boolean>('darkMode', false)
   const [defaultWorkTime, setDefaultWorkTime] = useLocalStorage<number>(
     'defaultWorkTime',
     25
@@ -39,11 +41,15 @@ const Component: React.FC = () => {
     5
   )
 
+  const dispatch = useAppDispatch()
+
   const handleDarkMode = () => {
     if (!darkMode) {
-      setDarkMode(true)
+      setDark(true)
+      dispatch(setDarkMode(true))
     } else {
-      setDarkMode(false)
+      setDark(false)
+      dispatch(setDarkMode(false))
     }
   }
 
@@ -64,9 +70,15 @@ const Component: React.FC = () => {
         control={<Switch checked={darkMode} />}
         label="Dark Mode"
         onClick={handleDarkMode}
+        sx={{ color: 'text.primary' }}
       />
       <SliderContainer>
-        <Typography id="default-work-time" gutterBottom variant="body2">
+        <Typography
+          id="default-work-time"
+          gutterBottom
+          variant="body2"
+          sx={{ color: 'text.primary' }}
+        >
           Set Default Work Time
         </Typography>
         <WorkTimeSlider
@@ -78,7 +90,12 @@ const Component: React.FC = () => {
         />
       </SliderContainer>
       <SliderContainer>
-        <Typography id="default-rest-time" gutterBottom variant="body2">
+        <Typography
+          id="default-rest-time"
+          gutterBottom
+          variant="body2"
+          sx={{ color: 'text.primary' }}
+        >
           Set Default Rest Time
         </Typography>
         <RestTimeSlider

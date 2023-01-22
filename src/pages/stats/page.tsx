@@ -7,29 +7,31 @@ import { Stat } from '../../epic/stat'
 import { useLocalStorage } from '../../hooks'
 import { IHistory } from '../../epic/history-table'
 
-const Wrapper = styled(Container)`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  padding: 20px 30px 20px 30px;
-  gap: 20px;
-  overflow-x: hidden;
+const Wrapper = styled(Container)(({ theme }) => ({
+  width: '100%',
+  height: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  padding: '20px 30px 20px 30px',
+  gap: '20px',
+  overflowX: 'hidden',
 
-  ::-webkit-scrollbar {
-    width: 0.4em;
-  }
-  ::-webkit-scrollbar-track {
-    background: #f1f1f1;
-  }
-  ::-webkit-scrollbar-thumb {
-    background-color: #888;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: #555;
-  }
-`
-
+  '::-webkit-scrollbar': {
+    width: '0.4em',
+  },
+  '::-webkit-scrollbar-track': {
+    background:
+      theme.palette.mode === 'light'
+        ? '#f1f1f1'
+        : theme.palette.background.default,
+  },
+  '::-webkit-scrollbar-thumb': {
+    backgroundColor: theme.palette.mode === 'light' ? '#888' : '#f1f1f1',
+  },
+  '::-webkit-scrollbar-thumb:hover': {
+    background: theme.palette.mode === 'light' ? '#555' : '#fbfbfb',
+  },
+}))
 interface StatValues {
   workTime: number
   restTime: number

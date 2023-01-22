@@ -17,6 +17,7 @@ import {
   Select,
   Typography,
   styled,
+  useTheme,
 } from '@mui/material'
 
 import { RestTimeSlider } from '../rest-time-slider'
@@ -40,6 +41,7 @@ const SelectWrapper = styled(Box)`
 const Component: React.FC = () => {
   const timer = useAppSelector(selectTimer)
   const dispatch = useAppDispatch()
+  const theme = useTheme()
 
   const handleChange = () => {
     dispatch(changeTimerMode())
@@ -58,7 +60,7 @@ const Component: React.FC = () => {
   }
 
   return (
-    <Wrapper>
+    <Wrapper theme={theme}>
       <SelectWrapper>
         <Select
           value={timer.mode}
@@ -69,7 +71,7 @@ const Component: React.FC = () => {
           <MenuItem value={TIMER_MODE.WORK}>work</MenuItem>
           <MenuItem value={TIMER_MODE.REST}>rest</MenuItem>
         </Select>
-        <Typography variant="h6">
+        <Typography variant="h6" sx={{ color: 'text.primary' }}>
           {timer.mode === TIMER_MODE.WORK ? timer.workTime : timer.restTime}m
         </Typography>
       </SelectWrapper>

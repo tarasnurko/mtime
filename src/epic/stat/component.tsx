@@ -41,6 +41,15 @@ const Component: React.FC<IProps> = ({ title, stats }) => {
   const restMinutes = getMinutes(stats.restTime)
   const restHours = getHours(stats.restTime)
 
+  const workColor =
+    theme.palette.mode === 'light'
+      ? theme.palette.primary.main
+      : theme.palette.primary.dark
+  const restColor =
+    theme.palette.mode === 'light'
+      ? theme.palette.secondary.main
+      : theme.palette.secondary.dark
+
   return (
     <Card sx={{ overflow: 'unset' }}>
       <CardContent>
@@ -61,7 +70,7 @@ const Component: React.FC<IProps> = ({ title, stats }) => {
                       root: { width: '100%' },
                       trail: { stroke: theme.palette.grey[300] },
                       path: {
-                        stroke: theme.palette.primary.main,
+                        stroke: workColor,
                       },
                     }}
                   >
@@ -80,7 +89,7 @@ const Component: React.FC<IProps> = ({ title, stats }) => {
                           strokeLinecap: 'butt',
                         },
                         path: {
-                          stroke: theme.palette.secondary.main,
+                          stroke: restColor,
                         },
                       }}
                     />

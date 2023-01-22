@@ -23,7 +23,7 @@ const ButtonWrapper = styled(Box)`
 `
 
 const Component: React.FC = () => {
-  const [history, setHistory] = useLocalStorage<IHistory>('history', [])
+  const [, setHistory] = useLocalStorage<IHistory>('history', [])
 
   const timer = useAppSelector(selectTimer)
   const dispatch = useAppDispatch()
