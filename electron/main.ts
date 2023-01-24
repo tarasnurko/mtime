@@ -1,21 +1,29 @@
-import { app, BrowserWindow, ipcMain } from 'electron'
+import path from 'path'
+import os from 'os'
+import { app, BrowserWindow } from 'electron'
+import { onShowTimerEndNotification } from './notifications'
+import { onMakeProgressBar, onStopProgressBar } from './progressbar'
+import { timer } from './timer'
 
 let mainWindow: BrowserWindow | null
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string
 
-// const assetsPath =
-//   process.env.NODE_ENV === 'production'
-//     ? process.resourcesPath
-//     : app.getAppPath()
+const assetsPath =
+  process.env.NODE_ENV === 'production'
+    ? process.resourcesPath
+    : app.getAppPath()
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    // icon: path.join(assetsPath, 'assets', 'icon.png'),
-    width: 700,
-    height: 500,
+    icon: path.join(assetsPath, 'assets', 'icon.png'),
+    width: 314,
+    height: 437,
     backgroundColor: '#fff',
+    title: 'mtime',
+    resizable: false,
+    autoHideMenuBar: true,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -34,9 +42,19 @@ async function registerListeners() {
   /**
    * This comes from bridge integration, check bridge.ts
    */
-  ipcMain.on('message', (_, message) => {
-    console.log(message)
-  })
+
+  timer.registerIpcListeners()
+
+  // -- notifications -- //
+  onShowTimerEndNotification(mainWindow)
+
+  // -- progress bar -//
+  onMakeProgressBar(mainWindow)
+  onStopProgressBar(mainWindow)
+}
+
+if (os.platform() === 'win32') {
+  app.setAppUserModelId('')
 }
 
 app

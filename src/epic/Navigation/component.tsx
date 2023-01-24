@@ -1,7 +1,10 @@
-import { BottomNavigation, BottomNavigationAction, Paper } from '@mui/material'
+import React from 'react'
+
+import { Link, useLocation } from 'react-router-dom'
 import { styled } from '@mui/material/styles'
-import { Link } from 'react-router-dom'
-import React, { useState } from 'react'
+
+import { BottomNavigation, BottomNavigationAction, Paper } from '@mui/material'
+
 import TimerOutlinedIcon from '@mui/icons-material/TimerOutlined'
 import DataSaverOffOutlinedIcon from '@mui/icons-material/DataSaverOffOutlined'
 import HistoryOutlinedIcon from '@mui/icons-material/HistoryOutlined'
@@ -14,23 +17,21 @@ const Container = styled(Paper)`
   width: 100%;
 `
 
-const Component = () => {
-  const [value, setValue] = useState<number>(0)
+const Component: React.FC = () => {
+  const { pathname } = useLocation()
 
-  const handleChange = (
-    event: React.SyntheticEvent<Element, Event>,
-    newValue: number
-  ) => {
-    setValue(newValue)
+  const getPageIndex = () => {
+    if (pathname === '/') return 0
+    if (pathname === '/stats') return 1
+    if (pathname === '/history') return 2
+    if (pathname === '/settings') return 3
   }
 
   return (
-    <Container
-      sx={{ position: 'fixed', bottom: 0, left: 0, width: '100%' }}
-      elevation={3}
-    >
-      <BottomNavigation showLabels value={value} onChange={handleChange}>
+    <Container elevation={3}>
+      <BottomNavigation showLabels value={getPageIndex()}>
         <BottomNavigationAction
+          sx={{ padding: 0, minWidth: 70 }}
           label="Main"
           icon={<TimerOutlinedIcon />}
           component={Link}
@@ -38,18 +39,21 @@ const Component = () => {
         />
 
         <BottomNavigationAction
+          sx={{ padding: 0, minWidth: 70 }}
           label="Stats"
           icon={<DataSaverOffOutlinedIcon />}
           component={Link}
           to="/stats"
         />
         <BottomNavigationAction
+          sx={{ padding: 0, minWidth: 70 }}
           label="History"
           icon={<HistoryOutlinedIcon />}
           component={Link}
           to="/history"
         />
         <BottomNavigationAction
+          sx={{ padding: 0, minWidth: 70 }}
           label="Settings"
           icon={<SettingsOutlinedIcon />}
           component={Link}
