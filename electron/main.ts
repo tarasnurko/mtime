@@ -1,4 +1,5 @@
 import path from 'path'
+import os from 'os'
 import { app, BrowserWindow } from 'electron'
 import { onShowTimerEndNotification } from './notifications'
 import { onMakeProgressBar, onStopProgressBar } from './progressbar'
@@ -50,6 +51,10 @@ async function registerListeners() {
   // -- progress bar -//
   onMakeProgressBar(mainWindow)
   onStopProgressBar(mainWindow)
+}
+
+if (os.platform() === 'win32') {
+  app.setAppUserModelId('')
 }
 
 app

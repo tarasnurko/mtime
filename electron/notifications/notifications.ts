@@ -1,3 +1,4 @@
+import path from 'path'
 import { BrowserWindow, ipcMain, Notification } from 'electron'
 
 import { timerEndNotificationMessages, NOTIFICATION_EVENTS } from './'
@@ -11,6 +12,7 @@ const emitShowTimerEndNotification = () => {
   const notification = new Notification({
     title: 'mtime',
     body: randomMessage,
+    icon: path.join(__dirname, '../../assets/icon.png'),
   })
 
   notification.show()
