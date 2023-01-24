@@ -9,7 +9,7 @@ const emitShowTimerEndNotification = () => {
     ]
 
   const notification = new Notification({
-    title: 'Ntime',
+    title: 'mtime',
     body: randomMessage,
   })
 

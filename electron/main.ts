@@ -1,3 +1,4 @@
+import path from 'path'
 import { app, BrowserWindow } from 'electron'
 import { onShowTimerEndNotification } from './notifications'
 import { onMakeProgressBar, onStopProgressBar } from './progressbar'
@@ -8,18 +9,20 @@ let mainWindow: BrowserWindow | null
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string
 
-// const assetsPath =
-//   process.env.NODE_ENV === 'production'
-//     ? process.resourcesPath
-//     : app.getAppPath()
+const assetsPath =
+  process.env.NODE_ENV === 'production'
+    ? process.resourcesPath
+    : app.getAppPath()
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    // icon: path.join(assetsPath, 'assets', 'icon.png'),
-    width: 314, // 414 314 700
-    height: 457, // 457
+    icon: path.join(assetsPath, 'assets', 'icon.png'),
+    width: 314,
+    height: 437,
     backgroundColor: '#fff',
     title: 'mtime',
+    resizable: false,
+    autoHideMenuBar: true,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
