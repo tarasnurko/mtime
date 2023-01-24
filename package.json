@@ -1,8 +1,8 @@
 {
-  "name": "electron-react-typescript",
-  "author": "Diego Fernandes <diego.schell.f@gmail.com>",
-  "version": "2.0.0",
-  "description": "An Electron boilerplate including TypeScript, React, Jest and ESLint.",
+  "name": "mtime",
+  "author": "Taras Nurko",
+  "version": "1.0.0",
+  "description": "Productivity timer",
   "main": "./.webpack/main/index.js",
   "scripts": {
     "start": "electron-forge start",
@@ -75,9 +75,9 @@
   "config": {
     "forge": {
       "packagerConfig": {
-        "name": "Electron starter",
-        "executableName": "electron-starter",
-        "icon": "assets/icon",
+        "name": "mtime",
+        "executableName": "mtime",
+        "icon": "./assets/icon.ico",
         "extraResource": [
           "assets"
         ]
